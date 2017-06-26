@@ -3,14 +3,23 @@ const pkg = require('./package.json');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyPlugin = require('copy-webpack-plugin');
+var ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 
 var extractPlugin = new ExtractTextPlugin({
     filename: pkg.vars.cssName
 });
 
 var CopyPlugin = new CopyPlugin([
-    {from: pkg.paths.src.templates}
+    {
+        from: pkg.paths.src.templates + 'main.php',
+        to: pkg.vars.phpName
+    }
 ]);
+
+var ManifestPlugin = new ChunkManifestPlugin({
+    filename: 'manifest.json',
+    manifestVariable: 'webpackManifest'
+});
 
 module.exports = {
     entry: pkg.paths.src.js + pkg.vars.entry,
@@ -48,6 +57,6 @@ module.exports = {
         ]
     },
     plugins: [
-        extractPlugin, CopyPlugin
+        extractPlugin, CopyPlugin, ManifestPlugin
     ]
 };
